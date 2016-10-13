@@ -4,7 +4,7 @@
 
 [Asset Store Link](https://www.assetstore.unity3d.com/#!/content/71391)
 
-## What This Is?
+## What Is This?
 
 This is a repository of **Unity Asset** - Master Server Framework. This repository will contain **hotfix'es**, helpful scripts and **documentation** ([wiki](https://github.com/alvyxaz/barebones-masterserver/wiki))
 
