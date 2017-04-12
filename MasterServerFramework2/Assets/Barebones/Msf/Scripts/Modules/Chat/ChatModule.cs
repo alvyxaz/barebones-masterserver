@@ -90,7 +90,7 @@ namespace Barebones.MasterServer
         {
             ChatUsers.Remove(user.Username.ToLower());
 
-            var channels = user.CurrentChannels;
+            var channels = user.CurrentChannels.ToList();
 
             foreach (var chatChannel in channels)
             {
@@ -193,7 +193,7 @@ namespace Barebones.MasterServer
             if (chatExt == null)
                 return;
 
-            var prevChannels = chatExt.CurrentChannels;
+            var prevChannels = chatExt.CurrentChannels.ToList();
             var defaultChannel = chatExt.DefaultChannel;
 
             // Remove the user from chat
@@ -207,10 +207,14 @@ namespace Barebones.MasterServer
             {
                 foreach (var prevChannel in prevChannels)
                 {
-                    prevChannel.AddUser(newExtension);
+                    var channel = GetOrCreateChannel(prevChannel.Name);
+                    if (channel != null)
+                    {
+                        channel.AddUser(newExtension);
+                    }
                 }
 
-                if (defaultChannel.Users.Contains(newExtension))
+                if (defaultChannel != null && defaultChannel.Users.Contains(newExtension))
                 {
                     // If we were added to the chat, which is now set as our default chat
                     // It's safe to set the default channel
