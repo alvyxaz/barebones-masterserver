@@ -1,0 +1,9 @@
+// ----------------------------
+// Here's a list of people, to whom I'm very thankful:
+
+----------------------------
+
+Emil Rainero -	For great contributions to testing and development of the 
+				framework, and for helping the community. Thank you!
+
+Spencer Crowell	- Fixing the MySQL implementation

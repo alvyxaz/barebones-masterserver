@@ -1,0 +1,3 @@
+To run the demo as it's intended, make a build with all of these scenes.
+"Demo-SelectScene" should be the first scene in your build :)
+

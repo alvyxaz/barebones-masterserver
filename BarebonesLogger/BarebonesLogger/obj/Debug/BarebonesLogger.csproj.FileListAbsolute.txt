@@ -1,0 +1,11 @@
+D:\Programming2\BarebonesLogger\BarebonesLogger\bin\Debug\BarebonesLogger.dll
+D:\Programming2\BarebonesLogger\BarebonesLogger\bin\Debug\BarebonesLogger.pdb
+D:\Programming2\BarebonesLogger\BarebonesLogger\bin\Debug\UnityEngine.dll
+D:\Programming2\BarebonesLogger\BarebonesLogger\bin\Debug\UnityEngine.xml
+D:\Programming2\BarebonesLogger\BarebonesLogger\obj\Debug\BarebonesLogger.dll
+D:\Programming2\BarebonesLogger\BarebonesLogger\obj\Debug\BarebonesLogger.pdb
+D:\Programming3\barebones-master\BarebonesLogger\BarebonesLogger\bin\Debug\BarebonesLogger.dll
+D:\Programming3\barebones-master\BarebonesLogger\BarebonesLogger\bin\Debug\BarebonesLogger.pdb
+D:\Programming3\barebones-master\BarebonesLogger\BarebonesLogger\obj\Debug\BarebonesLogger.dll
+D:\Programming3\barebones-master\BarebonesLogger\BarebonesLogger\obj\Debug\BarebonesLogger.pdb
+D:\Programming3\barebones-master\BarebonesLogger\BarebonesLogger\obj\Debug\BarebonesLogger.csprojResolveAssemblyReference.cache
