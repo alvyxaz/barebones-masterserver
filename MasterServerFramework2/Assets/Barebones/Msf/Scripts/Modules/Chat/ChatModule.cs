@@ -36,8 +36,8 @@ namespace Barebones.MasterServer
 
         public BmLogger Logger = Msf.Create.Logger(typeof(ChatModule).Name);
 
-        protected Dictionary<string, ChatUserExtension> ChatUsers;
-        protected Dictionary<string, ChatChannel> Channels;
+        public Dictionary<string, ChatUserExtension> ChatUsers;
+        public Dictionary<string, ChatChannel> Channels;
 
         protected virtual void Awake()
         {
@@ -90,6 +90,13 @@ namespace Barebones.MasterServer
         {
             ChatUsers.Remove(user.Username.ToLower());
 
+            var channels = user.CurrentChannels;
+
+            foreach (var chatChannel in channels)
+            {
+                chatChannel.RemoveUser(user);
+            }
+
             user.Peer.Disconnected -= OnClientDisconnected;
         }
 
@@ -110,16 +117,22 @@ namespace Barebones.MasterServer
 
         protected virtual void OnUserLoggedOut(IUserExtension account)
         {
-            ChatUserExtension chatUser;
-            ChatUsers.TryGetValue(account.Username.ToLower(), out chatUser);
+            var chatExt = account.Peer.GetExtension<ChatUserExtension>();
 
-            if (chatUser != null)
-                RemoveChatUser(chatUser);
+            if (chatExt != null)
+                RemoveChatUser(chatExt);
         }
 
         protected virtual void OnClientDisconnected(IPeer peer)
         {
             peer.Disconnected -= OnClientDisconnected;
+
+            var chatExt = peer.GetExtension<ChatUserExtension>();
+
+            if (chatExt != null)
+            {
+                RemoveChatUser(chatExt);
+            }
         }
 
         public virtual ChatChannel GetOrCreateChannel(string channelName)
@@ -163,6 +176,47 @@ namespace Barebones.MasterServer
             }
 
             return channel;
+        }
+
+        /// <summary>
+        /// Removes existing chat user from all the channels, and creates a new 
+        /// <see cref="ChatUserExtension"/> with new username. If <see cref="joinSameChannels"/> is true, 
+        /// user will be added to same channels
+        /// </summary>
+        /// <param name="peer"></param>
+        /// <param name="newUsername"></param>
+        /// <param name="joinSameChannels"></param>
+        public void ChangeUsername(IPeer peer, string newUsername, bool joinSameChannels = true)
+        {
+            var chatExt = peer.GetExtension<ChatUserExtension>();
+
+            if (chatExt == null)
+                return;
+
+            var prevChannels = chatExt.CurrentChannels;
+            var defaultChannel = chatExt.DefaultChannel;
+
+            // Remove the user from chat
+            RemoveChatUser(chatExt);
+
+            // Create a new chat user
+            var newExtension = CreateChatUser(peer, newUsername);
+            peer.AddExtension(newExtension);
+
+            if (joinSameChannels)
+            {
+                foreach (var prevChannel in prevChannels)
+                {
+                    prevChannel.AddUser(newExtension);
+                }
+
+                if (defaultChannel.Users.Contains(newExtension))
+                {
+                    // If we were added to the chat, which is now set as our default chat
+                    // It's safe to set the default channel
+                    newExtension.DefaultChannel = defaultChannel;
+                }
+            }
         }
 
         /// <summary>
