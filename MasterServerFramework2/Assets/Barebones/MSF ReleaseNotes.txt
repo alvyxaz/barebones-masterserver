@@ -1,4 +1,14 @@
 -----------------------------------------
+------- Version: V2.0.4 (Micro update)
+* Fixed "Disconnect" event when client is running on editor
+
+-----------------------------------------
+------- Version: V2.0.3 (Micro update)
+* Multiple Chat module fixes
+* Update MySQL implementation
+* Added PostreSQL implementation (thanks to Arcanor!)
+
+-----------------------------------------
 ------- Version: V2.0.2 (Micro update)
 * Added "Quick Setup" demonstration
 * Spawned servers will now copy "-batchmode" argument from spawner

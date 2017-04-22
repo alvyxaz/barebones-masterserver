@@ -145,5 +145,13 @@ namespace Barebones.MasterServer
             TimeToConnect = MinTimeToConnect;
             Logger.Info("Connected to: " + ServerIp+":" + ServerPort);
         }
+
+        void OnApplicationQuit()
+        {
+            var connection = GetConnection();
+
+            if (connection != null)
+                connection.Disconnect();
+        }
     }
 }
