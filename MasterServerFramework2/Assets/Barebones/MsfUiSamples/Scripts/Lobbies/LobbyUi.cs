@@ -490,7 +490,7 @@ namespace Barebones.MasterServer
 
             // Player changed teams
             var newTeam = Teams[team.Name];
-            user.transform.SetParent(newTeam.transform, false);
+            user.transform.SetParent(newTeam.UsersLayoutGroup.transform, false);
 
             if (member.Username == CurrentUser)
                 UpdateReadyButton();
