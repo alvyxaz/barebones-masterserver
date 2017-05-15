@@ -150,6 +150,42 @@ namespace Barebones.MasterServer
             return LoggedInUsers.ContainsKey(username);
         }
 
+        /// <summary>
+        /// Triggers the <see cref="LoggedOut"/> event
+        /// </summary>
+        protected void TriggerLoggedOutEvent(IUserExtension user)
+        {
+            if (LoggedOut != null)
+                LoggedOut.Invoke(user);
+        }
+
+        /// <summary>
+        /// Triggers the <see cref="LoggedIn"/> event
+        /// </summary>
+        protected void TriggerLoggedInEvent(IUserExtension user)
+        {
+            if (LoggedIn != null)
+                LoggedIn.Invoke(user);
+        }
+
+        /// <summary>
+        /// Triggers the <see cref="Registered"/> event
+        /// </summary>
+        protected void TriggerRegisteredEvent(IPeer peer, IAccountData account)
+        {
+            if (Registered != null)
+                Registered.Invoke(peer, account);
+        }
+
+        /// <summary>
+        /// Triggers the <see cref="EmailConfirmed"/> event
+        /// </summary>
+        protected void TriggerEmailConfirmed(IAccountData account)
+        {
+            if (EmailConfirmed != null) 
+                EmailConfirmed.Invoke(account);
+        }
+
         #region Message Handlers
 
         /// <summary>
