@@ -8,9 +8,9 @@ namespace Barebones.MasterServer
     {
         public delegate void LoginCallback(AccountInfoPacket accountInfo, string error);
 
-        private bool _isLogginIn;
+        private bool _isLoggingIn;
 
-        public bool IsLoggedIn { get; private set; }
+        public bool IsLoggedIn { get; protected set; }
 
         public AccountInfoPacket AccountInfo;
 
@@ -37,7 +37,7 @@ namespace Barebones.MasterServer
         /// </summary>
         public void Register(Dictionary<string, string> data, SuccessCallback callback, IClientSocket connection)
         {
-            if (_isLogginIn)
+            if (_isLoggingIn)
             {
                 callback.Invoke(false, "Log in is already in progress");
                 return;
@@ -176,7 +176,7 @@ namespace Barebones.MasterServer
                 return;
             }
 
-            _isLogginIn = true;
+            _isLoggingIn = true;
 
             // We first need to get an aes key 
             // so that we can encrypt our login data
@@ -184,7 +184,7 @@ namespace Barebones.MasterServer
             {
                 if (aesKey == null)
                 {
-                    _isLogginIn = false;
+                    _isLoggingIn = false;
                     callback.Invoke(null, "Failed to log in due to security issues");
                     return;
                 }
@@ -193,7 +193,7 @@ namespace Barebones.MasterServer
 
                 connection.SendMessage((short) MsfOpCodes.LogIn, encryptedData, (status, response) =>
                 {
-                    _isLogginIn = false;
+                    _isLoggingIn = false;
 
                     if (status != ResponseStatus.Success)
                     {
