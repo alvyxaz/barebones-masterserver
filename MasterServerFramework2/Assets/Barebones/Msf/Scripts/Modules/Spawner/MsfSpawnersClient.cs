@@ -57,7 +57,7 @@ namespace Barebones.MasterServer
                 // Spawn id
                 var spawnId = response.AsInt();
 
-                var controller = new SpawnRequestController(spawnId, connection);
+                var controller = new SpawnRequestController(spawnId, connection, options);
 
                 _localSpawnRequests[controller.SpawnId] = controller;
 

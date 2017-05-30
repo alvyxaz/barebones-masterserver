@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.Generic;
 using Barebones.Networking;
 
 namespace Barebones.MasterServer
@@ -12,10 +13,17 @@ namespace Barebones.MasterServer
 
         public SpawnStatus Status { get; private set; }
 
-        public SpawnRequestController(int spawnId, IClientSocket connection)
+        /// <summary>
+        /// A dictionary of options that user provided when requesting a 
+        /// process to be spawned
+        /// </summary>
+        public Dictionary<string, string> SpawnOptions;
+
+        public SpawnRequestController(int spawnId, IClientSocket connection, Dictionary<string, string> spawnOptions)
         {
             _connection = connection;
             SpawnId = spawnId;
+            SpawnOptions = spawnOptions;
 
             // Set handlers
             connection.SetHandler((short) MsfOpCodes.SpawnRequestStatusChange, HandleStatusUpdate);

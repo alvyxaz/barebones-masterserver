@@ -140,7 +140,11 @@ namespace Barebones.MasterServer
 
             var roomId = int.Parse(data[MsfDictKeys.RoomId]);
 
-            Msf.Client.Rooms.GetAccess(roomId, (access, error) =>
+            var password = data.ContainsKey(MsfDictKeys.RoomPassword)
+                ? data[MsfDictKeys.RoomPassword]
+                : "";
+
+            Msf.Client.Rooms.GetAccess(roomId, password, (access, error) =>
             {
                 if (access == null)
                 {

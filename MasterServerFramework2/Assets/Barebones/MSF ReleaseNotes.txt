@@ -1,6 +1,10 @@
 -----------------------------------------
 ------- Version: V2.0.4 (Micro update)
 * Fixed "Disconnect" event when client is running on editor
+* Added protected methods to trigger events in AuthModule
+* Elevated `AuthModule.IsLoggedIn` to protected
+* Fixed passwords in spawned rooms
+
 
 -----------------------------------------
 ------- Version: V2.0.3 (Micro update)
