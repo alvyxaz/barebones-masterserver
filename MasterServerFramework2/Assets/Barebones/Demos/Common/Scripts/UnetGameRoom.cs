@@ -154,9 +154,7 @@ public class UnetGameRoom : NetworkBehaviour
             IsPublic = isUsingLobby ? false : IsPublic,
             AllowUsersRequestAccess = isUsingLobby ? false : AllowUsersRequestAccess,
 
-            // Set the password
-            Password = properties.ContainsKey(MsfDictKeys.RoomPassword) 
-                ? properties[MsfDictKeys.RoomPassword] : "",
+            Password = Password,
 
             Properties = new Dictionary<string, string>()
             {
@@ -165,7 +163,7 @@ public class UnetGameRoom : NetworkBehaviour
             }
         };
 
-        BeforeSendingRegistrationOptions(options);
+        BeforeSendingRegistrationOptions(options, properties);
 
         // 2. Send a request to create a room
         Msf.Server.Rooms.RegisterRoom(options, (controller, error) =>
@@ -188,9 +186,17 @@ public class UnetGameRoom : NetworkBehaviour
     /// <summary>
     /// Override this method, if you want to make some changes to registration options
     /// </summary>
-    /// <param name="options"></param>
-    protected virtual void BeforeSendingRegistrationOptions(RoomOptions options)
+    /// <param name="options">Room options, before sending them to register a room</param>
+    /// <param name="spawnProperties">Properties, which were provided when spawning the process</param>
+    protected virtual void BeforeSendingRegistrationOptions(RoomOptions options, 
+        Dictionary<string, string> spawnProperties)
     {
+        // You can override this method, and modify room registration options
+
+        // For example, you could copy some of the properties from spawn request,
+        // like this:
+        if (spawnProperties.ContainsKey("magicProperty"))
+            options.Properties["magicProperty"] = spawnProperties["magicProperty"];
     }
 
     /// <summary>

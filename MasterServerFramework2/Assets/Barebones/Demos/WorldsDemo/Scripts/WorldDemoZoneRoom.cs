@@ -55,14 +55,16 @@ public class WorldDemoZoneRoom : UnetGameRoom {
             Application.Quit();
     }
 
+
     /// <summary>
-    /// Before registering a room, add a property with zone name,
-    /// so that master server can lookup zones
+    /// Override this method, if you want to make some changes to registration options
     /// </summary>
-    /// <param name="options"></param>
-    protected override void BeforeSendingRegistrationOptions(RoomOptions options)
+    /// <param name="options">Room options, before sending them to register a room</param>
+    /// <param name="spawnProperties">Properties, which were provided when spawning the process</param>
+    protected override void BeforeSendingRegistrationOptions(RoomOptions options, 
+        Dictionary<string, string> spawnProperties)
     {
-        base.BeforeSendingRegistrationOptions(options);
+        base.BeforeSendingRegistrationOptions(options, spawnProperties);
 
         if (options.Properties == null)
             options.Properties = new Dictionary<string, string>();
