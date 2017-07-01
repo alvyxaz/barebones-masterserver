@@ -149,7 +149,7 @@ namespace Barebones.MasterServer
                         var valueData = reader.ReadBytes(length);
 
                         if (!_properties.ContainsKey(key))
-                            return;
+                            continue;
 
                         _properties[key].FromBytes(valueData);
                     }
