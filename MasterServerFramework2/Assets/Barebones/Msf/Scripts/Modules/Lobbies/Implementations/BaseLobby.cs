@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using Barebones.Networking;
 using UnityEngine;
+using Barebones.Logging;
 
 namespace Barebones.MasterServer
 {
@@ -16,6 +17,8 @@ namespace Barebones.MasterServer
         public event Action<LobbyMember> PlayerRemoved;
 
         public event Action<ILobby> Destroyed;
+
+        public BmLogger Logger = Msf.Create.Logger(typeof(BaseLobby).Name);
 
         protected Dictionary<string, LobbyMember> Members;
         protected Dictionary<int, LobbyMember> MembersByPeerId;
@@ -808,8 +811,11 @@ namespace Barebones.MasterServer
         protected virtual void OnPlayerRemoved(LobbyMember member)
         {
             // Destroy lobby if last member left
-            if (Members.Count == 0)
+            if (!Config.KeepAliveWithZeroPlayers && Members.Count == 0)
+            {
                 Destroy();
+                Logger.Log(LogLevel.Info, string.Format("Lobby \"{0}\" destroyed due to last player leaving.", Name));
+            }
 
             // Notify others about the user who left
             Broadcast(MessageHelper.Create((short)MsfOpCodes.LobbyMemberLeft, member.Username));
