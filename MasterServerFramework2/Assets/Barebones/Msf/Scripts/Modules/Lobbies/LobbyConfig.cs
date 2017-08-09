@@ -42,6 +42,11 @@
         /// </summary>
         public bool EnableManualStart = true;
 
+        /// <summary>
+        /// If true, lobby will not destroy when last player leaves.
+        /// </summary>
+        public bool KeepAliveWithZeroPlayers = false;
+
         public bool AllowPlayersChangeLobbyProperties = true;
     }
 }
