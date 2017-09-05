@@ -345,16 +345,16 @@ namespace Barebones.Networking
 
         protected void TriggerAck(int ackId, ResponseStatus statusCode, IIncommingMessage message)
         {
+            ResponseCallback ackCallback;
             lock (_acks)
             {
-                ResponseCallback ackCallback;
                 _acks.TryGetValue(ackId, out ackCallback);
 
                 if (ackCallback == null) return;
 
                 _acks.Remove(ackId);
-                ackCallback(statusCode, message);
             }
+            ackCallback(statusCode, message);
         }
 
         private void StartAckTimeout(int ackId, int timeoutSecs)
@@ -443,16 +443,16 @@ namespace Barebones.Networking
 
         private void CancelAck(int ackId, ResponseStatus responseCode)
         {
+            ResponseCallback ackCallback;
             lock (_acks)
             {
-                ResponseCallback ackCallback;
                 _acks.TryGetValue(ackId, out ackCallback);
 
                 if (ackCallback == null) return;
 
                 _acks.Remove(ackId);
-                ackCallback(responseCode, _timeoutMessage);
             }
+            ackCallback(responseCode, _timeoutMessage);
         }
 
         #endregion
