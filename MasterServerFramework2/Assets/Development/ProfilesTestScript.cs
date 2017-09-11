@@ -1,12 +1,13 @@
 ﻿using System.Collections;
-using System.Runtime.Remoting.Messaging;
 using Barebones.MasterServer;
 using UnityEngine;
+using System.Collections.Generic;
 
 public class ProfilesTestScript : MonoBehaviour
 {
 
     private string _username;
+    private ObservableDictStringInt _serverInventory;
 
 	// Use this for initialization
 	void Start ()
@@ -24,6 +25,8 @@ public class ProfilesTestScript : MonoBehaviour
         // Get the profiles module
         var profilesModule = FindObjectOfType<ProfilesModule>();
 
+        var initialInventory = new Dictionary<string, int>();
+        initialInventory["Wood"] = 10;
         // Set the profile factory
         profilesModule.ProfileFactory = (username, peer) => new ObservableServerProfile(username)
         {
@@ -31,7 +34,7 @@ public class ProfilesTestScript : MonoBehaviour
             new ObservableInt(MyProfileKeys.Coins, 10),
             new ObservableInt(MyProfileKeys.Score, 0),
             new ObservableString(MyProfileKeys.Title, "DefaultTitle"),
-            new ObservableDictionary(MyProfileKeys.Inventory)
+            new ObservableDictStringInt(MyProfileKeys.Inventory, initialInventory)
             // And so on, and on...
         };
 
@@ -65,6 +68,7 @@ public class ProfilesTestScript : MonoBehaviour
             {
                 new ObservableInt(MyProfileKeys.Coins, 5),
                 new ObservableString(MyProfileKeys.Title, "DefaultTitle"),
+                new ObservableDictStringInt(MyProfileKeys.Inventory),
             };
 
             // Send a request to master server, to fill profile values
@@ -115,6 +119,7 @@ public class ProfilesTestScript : MonoBehaviour
         {
             new ObservableInt(MyProfileKeys.Coins, 5),
             new ObservableString(MyProfileKeys.Title, "DefaultTitle"),
+            new ObservableDictStringInt(MyProfileKeys.Inventory),
         };
 
         // Fill profile values
@@ -129,6 +134,8 @@ public class ProfilesTestScript : MonoBehaviour
             // Modify the profile (changes will automatically be sent to the master server)
             profile.GetProperty<ObservableInt>(MyProfileKeys.Coins).Add(4);
             profile.GetProperty<ObservableString>(MyProfileKeys.Title).Set("DifferentTitle");
+            _serverInventory = profile.GetProperty<ObservableDictStringInt>(MyProfileKeys.Inventory);
+            _serverInventory.SetValue("Wood", _serverInventory.GetValue("Wood") + 10);
 
         }, connection);
 
@@ -136,6 +143,6 @@ public class ProfilesTestScript : MonoBehaviour
 
     // Update is called once per frame
     void Update () {
-		
-	}
+
+    }
 }
