@@ -23,10 +23,10 @@ namespace Barebones.Networking
 
 
 #if !UNITY_EDITOR && (UNITY_WEBGL || !UNITY_WEBPLAYER)
-        private bool SuportsThreads { get { return false; } }
+        private bool SupportsThreads { get { return false; } }
 
 #else
-        private bool SuportsThreads { get { return true; } }
+        private bool SupportsThreads { get { return true; } }
 #endif
 
         public void SendString(string str)
@@ -139,7 +139,7 @@ namespace Barebones.Networking
             };
             m_Socket.OnClose += (sender, args) => m_IsConnected = false;
 
-            if (SuportsThreads)
+            if (SupportsThreads)
             {
                 ThreadPool.QueueUserWorkItem((status) =>
                 {
