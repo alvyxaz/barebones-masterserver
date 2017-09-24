@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -22,7 +22,7 @@ namespace Barebones.Networking
         }
 
 
-#if !UNITY_EDITOR && (UNITY_WEBGL)
+#if !UNITY_EDITOR && (UNITY_WEBGL) 
         private bool SupportsThreads { get { return false; } }
 #else
         private bool SupportsThreads { get { return true; } }
@@ -140,10 +140,7 @@ namespace Barebones.Networking
 
             if (SupportsThreads)
             {
-                ThreadPool.QueueUserWorkItem((status) =>
-                {
-                    m_Socket.Connect();
-                });
+	         m_Socket.ConnectAsync();
             }
             else
             {
@@ -160,7 +157,7 @@ namespace Barebones.Networking
 
         public void Send(byte[] buffer)
         {
-            m_Socket.Send(buffer);
+             m_Socket.Send(buffer);
         }
 
         public byte[] Recv()
@@ -173,7 +170,7 @@ namespace Barebones.Networking
 
         public void Close()
         {
-            m_Socket.Close();
+	     m_Socket.Close();
         }
 
         public string error
