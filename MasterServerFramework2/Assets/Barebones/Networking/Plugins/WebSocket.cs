@@ -22,9 +22,8 @@ namespace Barebones.Networking
         }
 
 
-#if !UNITY_EDITOR && (UNITY_WEBGL || !UNITY_WEBPLAYER)
+#if !UNITY_EDITOR && (UNITY_WEBGL)
         private bool SupportsThreads { get { return false; } }
-
 #else
         private bool SupportsThreads { get { return true; } }
 #endif
