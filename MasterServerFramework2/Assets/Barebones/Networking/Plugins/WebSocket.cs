@@ -140,7 +140,10 @@ namespace Barebones.Networking
 
             if (SupportsThreads)
             {
-	         m_Socket.ConnectAsync();
+	    	    ThreadPool.QueueUserWorkItem((status) =>
+		    {
+			    m_Socket.Connect();
+		    });
             }
             else
             {
