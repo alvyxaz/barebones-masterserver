@@ -173,7 +173,17 @@ namespace Barebones.Networking
 
         public void Close()
         {
-	     m_Socket.Close();
+	     	if (SupportsThreads)
+	        {
+		        ThreadPool.QueueUserWorkItem((status) =>
+		        {
+			        m_Socket.Close();
+		        });
+	        }
+	        else
+	        {
+		        m_Socket.Close();
+	        }
         }
 
         public string error
