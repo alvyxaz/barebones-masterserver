@@ -122,10 +122,12 @@ namespace Barebones.Networking
 
         public IEnumerator Connect()
         {
-            m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
-	        m_Socket.WaitTime = TimeSpan.FromSeconds(4);
-	        m_Socket.TcpTimeout = TimeSpan.FromSeconds(4);
-            m_Socket.OnMessage += (sender, e) =>
+	        m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString())
+	        {
+		        WaitTime = TimeSpan.FromSeconds(4),
+		        TcpTimeout = TimeSpan.FromSeconds(4)
+	        };
+	        m_Socket.OnMessage += (sender, e) =>
             {
                 m_Messages.Enqueue(e.RawData);
             };
@@ -142,10 +144,10 @@ namespace Barebones.Networking
 
             if (SupportsThreads)
             {
-	    	    ThreadPool.QueueUserWorkItem((status) =>
-		    	{
-			   		m_Socket.Connect();
-		    	});
+	            Thread newThread = new Thread(new ThreadStart(() =>
+	            {
+		            m_Socket.Connect();
+	            }));
             }
             else
             {
@@ -176,11 +178,11 @@ namespace Barebones.Networking
         public void Close()
         {
 	        if (SupportsThreads)
-	        {
-		        ThreadPool.QueueUserWorkItem((status) =>
+	        {		        
+		        Thread newThread = new Thread(new ThreadStart(() =>
 		        {
 			        m_Socket.Close();
-		        });
+		        }));
 	        }
 	        else
 	        {
