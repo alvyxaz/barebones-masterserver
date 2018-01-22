@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Text;
@@ -22,11 +22,10 @@ namespace Barebones.Networking
         }
 
 
-#if !UNITY_EDITOR && (UNITY_WEBGL || !UNITY_WEBPLAYER)
-        private bool SuportsThreads { get { return false; } }
-
+#if !UNITY_EDITOR && (UNITY_WEBGL) 
+        private bool SupportsThreads { get { return false; } }
 #else
-        private bool SuportsThreads { get { return true; } }
+        private bool SupportsThreads { get { return true; } }
 #endif
 
         public void SendString(string str)
@@ -118,13 +117,13 @@ namespace Barebones.Networking
         Queue<byte[]> m_Messages = new Queue<byte[]>();
         bool m_IsConnected = false;
         string m_Error = null;
-
+	    
         public bool IsConnected { get { return m_IsConnected; } }
 
         public IEnumerator Connect()
         {
-            m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
-            m_Socket.OnMessage += (sender, e) =>
+	        m_Socket = new WebSocketSharp.WebSocket(mUrl.ToString());
+	        m_Socket.OnMessage += (sender, e) =>
             {
                 m_Messages.Enqueue(e.RawData);
             };
@@ -139,12 +138,33 @@ namespace Barebones.Networking
             };
             m_Socket.OnClose += (sender, args) => m_IsConnected = false;
 
-            if (SuportsThreads)
+            if (SupportsThreads)
             {
-                ThreadPool.QueueUserWorkItem((status) =>
-                {
-                    m_Socket.Connect();
-                });
+	            //HACK: When restarting in the Unity Editor, send a ping to the destination first to avoid having Connect() hang for 90 seconds.
+	            //https://github.com/alvyxaz/barebones-masterserver/pull/142
+	            
+	            //Note: On Windows Store Apps, a stream socket is used to mimic ping functionality. It will try to open connection to specified ip address with port 80. Also you need to enable InternetClient capability in Package.appxmanifest.
+	            //https://docs.unity3d.com/ScriptReference/Ping.html
+	            Ping ping = new Ping(mUrl.Host);
+	            
+	            //The ping send/receive takes about a second, so we wait for it to complete.
+	            while (!ping.isDone)
+	            {
+		            yield return null;
+	            }
+	            
+	            //If the ping succeeded, the time will be 0 or higher, otherwise -1. 
+	            if (ping.time >= 0)
+	            {   
+		            runThread(() =>
+		            {
+			            m_Socket.Connect();
+		            });
+	            }
+	            else
+	            {
+		            m_Error = "Barebones Websocket: Could not contact \"" + mUrl.Host + "\" with Ping.";
+	            }
             }
             else
             {
@@ -161,7 +181,7 @@ namespace Barebones.Networking
 
         public void Send(byte[] buffer)
         {
-            m_Socket.Send(buffer);
+             m_Socket.Send(buffer);
         }
 
         public byte[] Recv()
@@ -174,7 +194,20 @@ namespace Barebones.Networking
 
         public void Close()
         {
-            m_Socket.Close();
+	        if (IsConnected)
+	        {
+		        if (SupportsThreads)
+		        {
+			        runThread(() =>
+			        {
+				        m_Socket.Close();
+			        });
+		        }
+		        else
+		        {
+			        m_Socket.Close();
+		        }
+	        }
         }
 
         public string error
@@ -183,6 +216,16 @@ namespace Barebones.Networking
                 return m_Error;
             }
         }
+
+	    void runThread(Action action)
+	    {
+		    Thread newThread = new Thread(new ThreadStart(() =>
+		    {
+			    action();
+		    }));
+		    newThread.Start();
+	    }
+	    
 #endif 
     }
 }
